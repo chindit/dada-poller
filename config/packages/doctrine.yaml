@@ -1,0 +1,26 @@
+doctrine:
+    orm:
+        auto_mapping: true
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        proxy_namespace: Proxies
+        proxy_dir: '%kernel.cache_dir%/doctrine/orm/Proxies'
+        default_entity_manager: default
+        metadata_cache_driver: array
+        query_cache_driver: array
+        result_cache_driver: array
+        mappings:
+            App\Entity:
+                type: annotation
+                dir: "%kernel.root_dir%/../src/Entity"
+                is_bundle: false
+                prefix: App\Entity
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                # configure these for your database server
+                url: 'mysql://david:indochine@127.0.0.1:3306/statistics'
+                driver: 'pdo_mysql'
+                server_version: 'mariadb-10.2.14'
+                charset: utf8mb4

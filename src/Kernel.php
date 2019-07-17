@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Service\PollerInterface;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -52,5 +53,12 @@ class Kernel extends BaseKernel
 	protected function configureRoutes(RouteCollectionBuilder $routes)
 	{
 		// Unneeded
+	}
+
+	protected function build(ContainerBuilder $container)
+	{
+		$container->registerForAutoconfiguration(PollerInterface::class)
+			->addTag('app.poll')
+		;
 	}
 }

@@ -8,6 +8,7 @@
 	"symfony/yaml": "^4.3"
   },
   "require-dev": {
+	"symfony/orm-pack": "^1.0",
 	"symfony/test-pack": "^1.0",
 	"phpstan/phpstan": "^0.11"
   },
