@@ -1,0 +1,32 @@
+{
+  "name": "chindit/dada-poller",
+  "description": "A system poller which store data in DB",
+  "type": "project",
+  "require": {
+	"symfony/console": "^4.3",
+	"symfony/framework-bundle": "^4.3",
+	"symfony/yaml": "^4.3"
+  },
+  "require-dev": {
+	"symfony/test-pack": "^1.0",
+	"phpstan/phpstan": "^0.11"
+  },
+  "license": "GNU AGPL v3",
+  "authors": [
+	{
+	  "name": "David",
+	  "email": "littletiger58@gmail.com"
+	}
+  ],
+  "config": {
+	"preferred-install": {
+	  "*": "dist"
+	},
+	"sort-packages": true
+  },
+  "autoload": {
+	"psr-4": {
+	  "App\\": "src/"
+	}
+  }
+}
