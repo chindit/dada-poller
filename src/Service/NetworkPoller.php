@@ -12,7 +12,7 @@ class NetworkPoller implements PollerInterface
 
 	public function getName(): string
 	{
-		$name = explode('\\', get_class());
+		$name = explode('\\', __CLASS__);
 
 		return end($name) ?: '';
 	}
