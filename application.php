@@ -7,9 +7,13 @@ use App\Kernel;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 
-$kernel = new Kernel('dev', true);
+use Symfony\Component\Dotenv\Dotenv;
+
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__.'/.env');
+$kernel = new Kernel($_SERVER['APP_ENV'] ?? 'dev', $_SERVER['APP_ENV'] === 'dev');
 $kernel->boot();
-$application = new Application('echo', '1.0.0');
+$application = new Application('dada-poller', '1.0.0');
 /** @var Command $command */
 $command = $kernel->getContainer()->get(PollerCommand::class);
 
