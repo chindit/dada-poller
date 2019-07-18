@@ -33,7 +33,7 @@ class CpuPoller implements PollerInterface
 
     public function poll(): array
     {
-        return array_merge($this->getCpuUsage(), $this->getCpuLoad());
+	    return array_merge($this->getCpuUsage(), $this->getCpuLoad(), $this->getProcesses());
     }
 
     private function getCpuUsage(): array
@@ -77,4 +77,31 @@ class CpuPoller implements PollerInterface
             (new PollData('load_15', $loadFifteen))->setCategory('loadavg'),
         ];
     }
+
+	private function getProcesses(): array
+	{
+		$result = [];
+
+		$cpuInfo = file('/proc/stat');
+
+		foreach ($cpuInfo as $line)
+		{
+			if (strpos('proc', $line) === 0)
+			{
+				$chunks = explode(' ', trim($line));
+
+				switch ($chunks[ 0 ])
+				{
+					case 'processes':
+						$result[] = (new PollData('processes', (float)$chunks[ 1 ]))->setCategory('processes');
+						break;
+					case 'procs_running':
+						$result[] = (new PollData('procs_running', (float)$chunks[ 1 ]))->setCategory('processes');
+						break;
+				}
+			}
+		}
+
+		return $result;
+	}
 }
