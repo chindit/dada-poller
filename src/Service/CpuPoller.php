@@ -82,6 +82,7 @@ class CpuPoller implements PollerInterface
 	{
 		$result = [];
 
+		/** @var string[] $cpuInfo */
 		$cpuInfo = file('/proc/stat');
 
 		foreach ($cpuInfo as $line)

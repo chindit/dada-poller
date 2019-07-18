@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\PollData;
-use function get_class;
 
 class NetworkPoller implements PollerInterface
 {
@@ -27,8 +26,8 @@ class NetworkPoller implements PollerInterface
 		$endTransferredBytes = (int)trim(file_get_contents($this->buildFileName(false)) ?: '');
 
 		return [
-			new PollData('rx_bytes', (float)($endReceivedBytes - $startReceivedBytes)),
-			new PollData('tx_bytes', (float)($endTransferredBytes - $startTransferredBytes)),
+			(new PollData('rx_bytes', (float)($endReceivedBytes - $startReceivedBytes)))->setCategory('network'),
+			(new PollData('tx_bytes', (float)($endTransferredBytes - $startTransferredBytes)))->setCategory('network'),
 		];
 	}
 
