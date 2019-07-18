@@ -60,6 +60,10 @@ class CpuPoller implements PollerInterface
         $dif['idle'] = (int)$info2[3] - (int)$info1[3];
         $total = array_sum($dif);
 
+	    if ($total === 0)
+	    {
+		    $total = 1;
+	    }
         foreach ($dif as $x => $y) {
             $cpu[] = (new PollData(sprintf('cpu_%s', $x), round($y / $total * 100, 1)))->setCategory('cpu');
         }
