@@ -11,10 +11,10 @@ class MemoryPoller implements PollerInterface
 		$memory = $this->getMemoryUsage();
 
 		return [
-			(new PollData('mem_total', (float)$memory[ 'MemTotal' ]))->setCategory('memory'),
-			(new PollData('mem_free', (float)$memory[ 'MemFree' ]))->setCategory('memory'),
-			(new PollData('mem_cached', (float)$memory[ 'Cached' ] + (float)$memory[ 'SwapCached' ]))->setCategory('memory'),
-			(new PollData('mem_used', (float)$memory[ 'MemTotal' ] - (float)$memory[ 'MemFree' ]))->setCategory('memory'),
+			(new PollData('mem_total', (float)$memory[ 'MemTotal' ]))->setCategory('memory')->setName('Total Memory'),
+			(new PollData('mem_free', (float)$memory[ 'MemFree' ]))->setCategory('memory')->setName('Free Memory'),
+			(new PollData('mem_cached', (float)$memory[ 'Cached' ] + (float)$memory[ 'SwapCached' ]))->setCategory('memory')->setName('Cached Memory'),
+			(new PollData('mem_used', (float)$memory[ 'MemTotal' ] - (float)$memory[ 'MemFree' ]))->setCategory('memory')->setName('Used Memory'),
 		];
 	}
 

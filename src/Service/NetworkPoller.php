@@ -26,8 +26,8 @@ class NetworkPoller implements PollerInterface
 		$endTransferredBytes = (int)trim(file_get_contents($this->buildFileName(false)) ?: '');
 
 		return [
-			(new PollData('rx_bytes', (float)($endReceivedBytes - $startReceivedBytes)))->setCategory('network'),
-			(new PollData('tx_bytes', (float)($endTransferredBytes - $startTransferredBytes)))->setCategory('network'),
+			(new PollData('rx_bytes', (float)($endReceivedBytes - $startReceivedBytes)))->setCategory('network')->setName('Received traffic (bytes)'),
+			(new PollData('tx_bytes', (float)($endTransferredBytes - $startTransferredBytes)))->setCategory('network')->setName('Transferred traffic (bytes)'),
 		];
 	}
 

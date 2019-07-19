@@ -65,7 +65,7 @@ class CpuPoller implements PollerInterface
 		    $total = 1;
 	    }
         foreach ($dif as $x => $y) {
-            $cpu[] = (new PollData(sprintf('cpu_%s', $x), round($y / $total * 100, 1)))->setCategory('cpu');
+	        $cpu[] = (new PollData(sprintf('cpu_%s', $x), round($y / $total * 100, 1)))->setCategory('cpu')->setName('CPU Utilization');
         }
 
         return $cpu;
@@ -76,9 +76,9 @@ class CpuPoller implements PollerInterface
         list($loadOne, $loadFive, $loadFifteen) = sys_getloadavg();
 
         return [
-            (new PollData('load_1', $loadOne))->setCategory('loadavg'),
-            (new PollData('load_5', $loadFive))->setCategory('loadavg'),
-            (new PollData('load_15', $loadFifteen))->setCategory('loadavg'),
+	        (new PollData('load_1', $loadOne))->setCategory('loadavg')->setName('Load average 1 min'),
+	        (new PollData('load_5', $loadFive))->setCategory('loadavg')->setName('Load average 5 min'),
+	        (new PollData('load_15', $loadFifteen))->setCategory('loadavg')->setName('Load average 15 min'),
         ];
     }
 
@@ -98,10 +98,10 @@ class CpuPoller implements PollerInterface
 				switch ($chunks[ 0 ])
 				{
 					case 'processes':
-						$result[] = (new PollData('processes', (float)$chunks[ 1 ]))->setCategory('processes');
+						$result[] = (new PollData('processes', (float)$chunks[ 1 ]))->setCategory('processes')->setName('Number of active processes');
 						break;
 					case 'procs_running':
-						$result[] = (new PollData('procs_running', (float)$chunks[ 1 ]))->setCategory('processes');
+						$result[] = (new PollData('procs_running', (float)$chunks[ 1 ]))->setCategory('processes')->setName('Number of running processes');
 						break;
 				}
 			}
