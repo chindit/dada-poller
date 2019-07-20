@@ -61,7 +61,7 @@ class CpuPoller implements PollerInterface
         $dif['idle'] = end($cpuStats);
 
         foreach ($dif as $x => $y) {
-            $cpu[] = (new PollData(sprintf('cpu_%s', $x), $y))->setCategory('cpu')->setName('CPU Utilization');
+            $cpu[] = (new PollData(sprintf('cpu_%s', $x), (float)$y))->setCategory('cpu')->setName('CPU Utilization');
         }
 
         return $cpu;
