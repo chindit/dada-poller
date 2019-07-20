@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table("statistics",
  *     uniqueConstraints={
  *        @ORM\UniqueConstraint(name="poll_data_unique",
- *            columns={"key", "date"})
+ *            columns={"key_data", "date_data"})
  *     }
  * )
  */
@@ -26,7 +26,7 @@ class PollData
 	private $id;
 
 	/**
-	 * @ORM\Column(type="string", length=25)
+	 * @ORM\Column(type="string", length=25, name="key_data")
 	 */
 	private $key;
 
@@ -41,12 +41,12 @@ class PollData
 	private $category;
 
 	/**
-	 * @ORM\Column(type="float")
+	 * @ORM\Column(type="float", name="value_data")
 	 */
 	private $value;
 
 	/**
-	 * @ORM\Column(type="datetime")
+	 * @ORM\Column(type="datetime", name="date_data")
 	 */
 	private $date;
 

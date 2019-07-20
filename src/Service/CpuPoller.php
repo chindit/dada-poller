@@ -21,6 +21,7 @@ namespace App\Service;
 
 
 use App\Entity\PollData;
+use Symfony\Component\Process\Process;
 
 class CpuPoller implements PollerInterface
 {
@@ -40,32 +41,27 @@ class CpuPoller implements PollerInterface
     {
         $cpu = [];
 
-        /** @var string[] $startCpu */
-        $startCpu = file('/proc/stat');
-        usleep(1000);
-        /** @var string[] $endCpu */
-        $endCpu = file('/proc/stat');
+        $cpuProcess = new Process(['mpstat']);
+        $cpuProcess->run();
 
-        /**
-         * Line 1 in total of all CPUs
-         *
-         * Following lines (ignored) are load detail CPU by CPU
-         */
-        $info1 = explode(' ', preg_replace('!cpu +!', '', $startCpu[0] ?? '') ?: '');
-        $info2 = explode(' ', preg_replace('!cpu +!', '', $endCpu[0] ?? '') ?: '');
-        $dif = array();
-        $dif['user'] = (int)$info2[0] - (int)$info1[0];
-        $dif['nice'] = (int)$info2[1] - (int)$info1[1];
-        $dif['sys'] = (int)$info2[2] - (int)$info1[2];
-        $dif['idle'] = (int)$info2[3] - (int)$info1[3];
-        $total = array_sum($dif);
+        $cpuStatsLines = explode("\n", $cpuProcess->getOutput());
+        $cpuStats = explode(' ', $cpuStatsLines[3]);
 
-	    if ($total === 0)
-	    {
-		    $total = 1;
-	    }
+        $cpuStats = array_filter($cpuStats, function ($value) {
+           return !empty(trim($value));
+        });
+
+        // Reorder keys
+        $cpuStats = array_values($cpuStats);
+
+        $dif = [];
+        $dif['user'] = $cpuStats[2];
+        $dif['nice'] = $cpuStats[3];
+        $dif['sys'] = $cpuStats[4];
+        $dif['idle'] = end($cpuStats);
+
         foreach ($dif as $x => $y) {
-	        $cpu[] = (new PollData(sprintf('cpu_%s', $x), round($y / $total * 100, 1)))->setCategory('cpu')->setName('CPU Utilization');
+            $cpu[] = (new PollData(sprintf('cpu_%s', $x), $y))->setCategory('cpu')->setName('CPU Utilization');
         }
 
         return $cpu;
