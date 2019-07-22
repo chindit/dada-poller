@@ -4,10 +4,19 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\PollData;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\CacheItem;
 
 class NetworkPoller implements PollerInterface
 {
 	private $interface = '';
+
+	private $cache;
+
+	public function __construct()
+	{
+		$this->cache = new FilesystemAdapter();
+	}
 
 	public function getName(): string
 	{
@@ -18,17 +27,31 @@ class NetworkPoller implements PollerInterface
 
 	public function poll(): array
 	{
-		$startReceivedBytes = (int)trim(file_get_contents($this->buildFileName()) ?: '');
-		$startTransferredBytes = (int)trim(file_get_contents($this->buildFileName(false)) ?: '');
+		/** @var CacheItem $startReceivedBytes */
+		$startReceivedBytes = $this->cache->getItem('rx_bytes');
+		/** @var CacheItem $startTransferredBytes */
+		$startTransferredBytes = $this->cache->getItem('tx_bytes');
 
-		usleep(1000);
 		$endReceivedBytes = (int)trim(file_get_contents($this->buildFileName()) ?: '');
 		$endTransferredBytes = (int)trim(file_get_contents($this->buildFileName(false)) ?: '');
 
-		return [
-			(new PollData('rx_bytes', (float)($endReceivedBytes - $startReceivedBytes)))->setCategory('network')->setName('Received traffic (bytes)'),
-			(new PollData('tx_bytes', (float)($endTransferredBytes - $startTransferredBytes)))->setCategory('network')->setName('Transferred traffic (bytes)'),
-		];
+		$data = [];
+
+		if (null !== $startTransferredBytes->get() && null !== $startReceivedBytes->get())
+		{
+			$data = [
+				(new PollData('rx_bytes', (float)($endReceivedBytes - $startReceivedBytes->get())))->setCategory('network')->setName('Received traffic (bytes)'),
+				(new PollData('tx_bytes', (float)($endTransferredBytes - $startTransferredBytes->get())))->setCategory('network')->setName('Transferred traffic (bytes)'),
+			];
+		}
+
+		$startReceivedBytes->set($endReceivedBytes)->expiresAfter(65);
+		$startTransferredBytes->set($endTransferredBytes)->expiresAfter(65);
+
+		$this->cache->save($startTransferredBytes);
+		$this->cache->save($startReceivedBytes);
+
+		return $data;
 	}
 
 	private function autodetectNetworkInterface(): string
