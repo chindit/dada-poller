@@ -38,6 +38,13 @@ class NetworkPoller implements PollerInterface
 			return $this->interface;
 		}
 
+		if (isset($_ENV[ 'NETWORK_INTERFACE' ]) && is_file(sprintf('/sys/class/net/%s/rx_bytes', $_ENV[ 'NETWORK_INTERFACE' ])))
+		{
+			$this->interface = $_ENV[ 'NETWORK_INTERFACE' ];
+
+			return $this->interface;
+		}
+
 		/** @var string[] $interfaces */
 		$interfaces = scandir('/sys/class/net');
 
